@@ -1,27 +1,35 @@
 #include <iostream>          // for cout printing
 #include <vector>            // for vector
-#include <queue>             // for priority_queue
-#include <unordered_set>     // for unordered_set
-#include <string>            // for string
-#include <sstream>           // for stringstream (toString method)
-#include <chrono>            // for timing
-#include <algorithm>         // for reverse
+#include "PuzzleState.h"
+#include "UCS.h"
+#include "AStar.h"
 
 using namespace std;
 
 int main() {
-    vector<vector<int>> startBoard = {
+    vector<vector<int>> startBoard = { // Initial puzzle board to solve (Randomizes)
         {1, 2, 3},
         {8, 0, 4},
         {7, 6, 5}
     };
 
-    vector<vector<int>> goalBoard = {
+    vector<vector<int>> goalBoard = { // Goal end of solved board
         {1, 2, 3},
         {8, 0, 4},
         {7, 6, 5}
     };
 
+    // Creates a puzzlestate object
+    PuzzleState* startState = new PuzzleState(startBoard);
+
+    // Creates UCS solver and runs it
+    UCS ucsSolver(startState, goalBoard);
+    ucsSolver.solve();
+
+    // Creates A* solver and runs it
+    AStar astarSolver(startState, goalBoard);
+    astarSolver.solveManhattan();
+    astarSolver.solveNilsson();
 
     return 0;
 }
