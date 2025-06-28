@@ -4,4 +4,7 @@ project(AI_Programming_Assignment2)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(AI_Programming_Assignment2 main.cpp
+        PuzzleState.h
+        UCS.h
+        AStar.h
 )
