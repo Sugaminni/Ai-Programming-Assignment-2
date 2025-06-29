@@ -46,12 +46,12 @@ vector<PuzzleState*> PuzzleState::generateNeighbors() {
     vector<PuzzleState*> neighbors;
 
     // Finds location of empty tile (0)
-    int zeroRow, zeroCol;
+    int zeroRow, zeroColumn;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (board[i][j] == 0) {
                 zeroRow = i;
-                zeroCol = j;
+                zeroColumn = j;
             }
         }
     }
@@ -63,12 +63,12 @@ vector<PuzzleState*> PuzzleState::generateNeighbors() {
 
     for (auto dir : directions) {
         int newRow = zeroRow + dir.first;
-        int newCol = zeroCol + dir.second;
+        int newColumn = zeroColumn + dir.second;
 
         // Checks bounds
         if (newRow >= 0 && newRow < 3 && newCol >= 0 && newCol < 3) {
             vector<vector<int>> newBoard = board;
-            swap(newBoard[zeroRow][zeroCol], newBoard[newRow][newCol]);
+            swap(newBoard[zeroRow][zeroColumn], newBoard[newRow][newColumn]);
 
             // Creates new PuzzleState for this move
             PuzzleState* newState = new PuzzleState(newBoard, this, gCost + 1);
