@@ -66,7 +66,7 @@ vector<PuzzleState*> PuzzleState::generateNeighbors() {
         int newColumn = zeroColumn + dir.second;
 
         // Checks bounds
-        if (newRow >= 0 && newRow < 3 && newCol >= 0 && newCol < 3) {
+        if (newRow >= 0 && newRow < 3 && newColumn >= 0 && newColumn < 3) {
             vector<vector<int>> newBoard = board;
             swap(newBoard[zeroRow][zeroColumn], newBoard[newRow][newColumn]);
 

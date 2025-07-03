@@ -55,7 +55,7 @@ void AStar::solve(HeuristicFunction heuristic) {
             auto endTime = chrono::high_resolution_clock::now();
             chrono::duration<double> elapsed = endTime - startTime;
 
-            cout << "A* found the solution in " << elapsed.count() << " seconds!" << endl;
+            cout << "A* found the solution in " << elapsed.count() << " seconds." << endl;
             cout << "Nodes visited: " << nodesVisited << endl;
 
             reconstructPath(current);
@@ -115,7 +115,39 @@ int AStar::manhattanHeuristic(PuzzleState* state) {
 
  // For Nilsson's heuristic
 int AStar::nilssonHeuristic(PuzzleState* state) {
-    // Need to implement Nilsson's Sequence Score heuristic
-    return 0;
+    int manhattan = manhattanHeuristic(state);
+
+    // Defines the perimeter tiles in sequence
+    vector<pair<int, int>> perimeter = {
+        {0,0}, {0,1}, {0,2}, {1,2},
+        {2,2}, {2,1}, {2,0}, {1,0}
+    };
+
+    // Goal sequence around the ring
+    vector<int> goalSequence = {1, 2, 3, 4, 5, 6, 7, 8};
+
+    int sequencePenalty = 0;
+
+    // Checks tiles in sequence
+    for (size_t i = 0; i < perimeter.size(); i++) {
+        int row = perimeter[i].first;
+        int col = perimeter[i].second;
+        int tile = state->board[row][col];
+
+        int expectedTile = goalSequence[i];
+
+        if (tile != expectedTile) {
+            sequencePenalty++;
+        }
+    }
+
+    // Checks center tile
+    int centerTile = state->board[1][1];
+    int centerPenalty = (centerTile != 0) ? 1 : 0;
+
+    // Computes Nilsson’s heuristic
+    int nilsson = manhattan + (2 * sequencePenalty) + (centerPenalty * 1);
+
+    return nilsson;
 }
 

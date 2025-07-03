@@ -8,9 +8,9 @@ using namespace std;
 
 int main() {
     vector<vector<int>> startBoard = { // Initial puzzle board to solve (Randomizes)
-        {1, 2, 3},
-        {8, 0, 4},
-        {7, 6, 5}
+        {2, 8, 3},
+        {1, 6, 4},
+        {7, 0, 5}
     };
 
     vector<vector<int>> goalBoard = { // Goal end of solved board
