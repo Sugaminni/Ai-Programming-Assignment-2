@@ -3,6 +3,7 @@
 
 #include "PuzzleState.h"
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// Constructor to initialize board, parent, and costs
+// Initializes puzzle board, parent pointer, and costs
 PuzzleState::PuzzleState(vector<vector<int>> b, PuzzleState* p, int g, int h) {
     board = b;
     parent = p;
@@ -14,12 +14,12 @@ PuzzleState::PuzzleState(vector<vector<int>> b, PuzzleState* p, int g, int h) {
     fCost = gCost + hCost;
 }
 
-// Checks if current board matches goal board
+// Returns true if board matches goal state
 bool PuzzleState::isGoal(const vector<vector<int>>& goalBoard) {
     return board == goalBoard;
 }
 
-// Prints the puzzle board
+// Prints the puzzle board to console
 void PuzzleState::print() {
     for (auto row : board) {
         for (int tile : row) {
@@ -30,7 +30,7 @@ void PuzzleState::print() {
     cout << "---------" << endl;
 }
 
-// Converts board to string for hashing/comparison
+// Converts the board to a string for hashing
 string PuzzleState::toString() {
     stringstream ss;
     for (auto row : board) {
@@ -41,11 +41,11 @@ string PuzzleState::toString() {
     return ss.str();
 }
 
-// Generates all valid next states by moving empty tile
+// Generates valid neighbor states by moving the blank tile
 vector<PuzzleState*> PuzzleState::generateNeighbors() {
     vector<PuzzleState*> neighbors;
 
-    // Finds location of empty tile (0)
+    // Finds blank (0) position
     int zeroRow, zeroColumn;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -65,12 +65,11 @@ vector<PuzzleState*> PuzzleState::generateNeighbors() {
         int newRow = zeroRow + dir.first;
         int newColumn = zeroColumn + dir.second;
 
-        // Checks bounds
         if (newRow >= 0 && newRow < 3 && newColumn >= 0 && newColumn < 3) {
             vector<vector<int>> newBoard = board;
             swap(newBoard[zeroRow][zeroColumn], newBoard[newRow][newColumn]);
 
-            // Creates new PuzzleState for this move
+            // Create new PuzzleState for the neighbor
             PuzzleState* newState = new PuzzleState(newBoard, this, gCost + 1);
             neighbors.push_back(newState);
         }

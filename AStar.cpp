@@ -1,48 +1,50 @@
 #include "AStar.h"
 #include <queue>
-#include <unordered_set>
+#include <unordered_map>
 #include <chrono>
 #include <algorithm>
 #include <iostream>
 
 using namespace std;
 
-// Comparison structure to sort priority queue by fCost
+// Defines how to compare nodes by fCost in the priority queue
 struct CompareF {
     bool operator()(PuzzleState* a, PuzzleState* b) {
         return a->fCost > b->fCost;
     }
 };
 
-// Constructor for A* method
+// Constructor to save start state and goal board
 AStar::AStar(PuzzleState* start, vector<vector<int>> goal) {
     startState = start;
     goalBoard = goal;
 }
 
-// Runs A* using Manhattan heuristic
+// Runs A* using Manhattan Distance
 void AStar::solveManhattan() {
     cout << "Running A* with Manhattan Distance Heuristic:" << endl;
     solve(&AStar::manhattanHeuristic);
 }
 
-// Runs A* using Nilsson's heuristic
+// Runs A* using Nilsson's sequence heuristic
 void AStar::solveNilsson() {
     cout << "Running A* with Nilsson Sequence Heuristic:" << endl;
     solve(&AStar::nilssonHeuristic);
 }
 
-// Core A* logic, accepts a heuristic function pointer
+// Core A* algorithm
 void AStar::solve(HeuristicFunction heuristic) {
     auto startTime = chrono::high_resolution_clock::now();
 
     priority_queue<PuzzleState*, vector<PuzzleState*>, CompareF> openList;
-    unordered_set<string> visited;
+    unordered_map<string, int> costSoFar;
 
-    // Calculates heuristic for start state
+    // Initializes start node's heuristic and total cost
     startState->hCost = (this->*heuristic)(startState);
     startState->fCost = startState->gCost + startState->hCost;
+
     openList.push(startState);
+    costSoFar[startState->toString()] = startState->fCost;
 
     int nodesVisited = 0;
 
@@ -50,6 +52,8 @@ void AStar::solve(HeuristicFunction heuristic) {
         PuzzleState* current = openList.top();
         openList.pop();
         nodesVisited++;
+
+        string currentStr = current->toString();
 
         if (current->isGoal(goalBoard)) {
             auto endTime = chrono::high_resolution_clock::now();
@@ -62,14 +66,23 @@ void AStar::solve(HeuristicFunction heuristic) {
             return;
         }
 
-        visited.insert(current->toString());
+        if (costSoFar.find(currentStr) != costSoFar.end() &&
+            current->fCost > costSoFar[currentStr]) {
+            continue;
+        }
 
         vector<PuzzleState*> neighbors = current->generateNeighbors();
 
         for (PuzzleState* neighbor : neighbors) {
-            if (visited.find(neighbor->toString()) == visited.end()) {
-                neighbor->hCost = (this->*heuristic)(neighbor);
-                neighbor->fCost = neighbor->gCost + neighbor->hCost;
+            neighbor->hCost = (this->*heuristic)(neighbor);
+            neighbor->fCost = neighbor->gCost + neighbor->hCost;
+
+            string neighborStr = neighbor->toString();
+
+            // Only adds neighbor if it’s new or a cheaper path
+            if (costSoFar.find(neighborStr) == costSoFar.end() ||
+                neighbor->fCost < costSoFar[neighborStr]) {
+                costSoFar[neighborStr] = neighbor->fCost;
                 openList.push(neighbor);
             }
         }
@@ -78,7 +91,7 @@ void AStar::solve(HeuristicFunction heuristic) {
     cout << "A* could not find a solution." << endl;
 }
 
-// Prints the path from start to goal
+// Prints the solution path
 void AStar::reconstructPath(PuzzleState* goalNode) {
     vector<PuzzleState*> path;
 
@@ -94,7 +107,7 @@ void AStar::reconstructPath(PuzzleState* goalNode) {
     }
 }
 
-// Calculates Manhattan Distance heuristic
+// Calculates Manhattan distance heuristic
 int AStar::manhattanHeuristic(PuzzleState* state) {
     int distance = 0;
 
@@ -113,22 +126,19 @@ int AStar::manhattanHeuristic(PuzzleState* state) {
     return distance;
 }
 
- // For Nilsson's heuristic
+// Calculates Nilsson's sequence heuristic
 int AStar::nilssonHeuristic(PuzzleState* state) {
     int manhattan = manhattanHeuristic(state);
 
-    // Defines the perimeter tiles in sequence
     vector<pair<int, int>> perimeter = {
         {0,0}, {0,1}, {0,2}, {1,2},
         {2,2}, {2,1}, {2,0}, {1,0}
     };
 
-    // Goal sequence around the ring
     vector<int> goalSequence = {1, 2, 3, 4, 5, 6, 7, 8};
 
     int sequencePenalty = 0;
 
-    // Checks tiles in sequence
     for (size_t i = 0; i < perimeter.size(); i++) {
         int row = perimeter[i].first;
         int col = perimeter[i].second;
@@ -141,13 +151,10 @@ int AStar::nilssonHeuristic(PuzzleState* state) {
         }
     }
 
-    // Checks center tile
     int centerTile = state->board[1][1];
     int centerPenalty = (centerTile != 0) ? 1 : 0;
 
-    // Computes Nilsson’s heuristic
-    int nilsson = manhattan + (2 * sequencePenalty) + (centerPenalty * 1);
+    int nilsson = manhattan + (2 * sequencePenalty) + centerPenalty;
 
     return nilsson;
 }
-

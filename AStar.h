@@ -3,6 +3,7 @@
 
 #include "PuzzleState.h"
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -17,7 +18,6 @@ private:
     vector<vector<int>> goalBoard;
 
     typedef int (AStar::*HeuristicFunction)(PuzzleState*);
-
     void solve(HeuristicFunction heuristic);
     void reconstructPath(PuzzleState* goalNode);
     int manhattanHeuristic(PuzzleState* state);
