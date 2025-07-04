@@ -55,6 +55,7 @@ void AStar::solve(HeuristicFunction heuristic) {
 
         string currentStr = current->toString();
 
+        // Prints out solution and confirmation
         if (current->isGoal(goalBoard)) {
             cout << "A* found the solution." << endl;
             cout << "Nodes visited: " << nodesVisited << endl;

@@ -40,6 +40,7 @@ void UCS::solve() {
 
         string currentStr = current->toString();
 
+        // Prints out solution and confirmation
         if (current->isGoal(goalBoard)) {
             cout << "UCS found the solution." << endl;
             cout << "Nodes visited: " << nodesVisited << endl;
