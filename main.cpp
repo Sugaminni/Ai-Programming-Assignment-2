@@ -32,7 +32,7 @@ int main() {
         {7, 6, 5}
     };
 
-    // Generate a random starting board
+    // Generates a random starting board
     vector<vector<int>> startBoard = generateRandomBoard(goalBoard, 50);
 
     // Prints the starting board

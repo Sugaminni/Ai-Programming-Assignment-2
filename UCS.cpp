@@ -41,10 +41,7 @@ void UCS::solve() {
         string currentStr = current->toString();
 
         if (current->isGoal(goalBoard)) {
-            auto endTime = chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed = endTime - startTime;
-
-            cout << "UCS found the solution in " << elapsed.count() << " seconds." << endl;
+            cout << "UCS found the solution." << endl;
             cout << "Nodes visited: " << nodesVisited << endl;
 
             reconstructPath(current);
